@@ -1,41 +1,33 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using FashionStoreManagement.Models;
 using System.Linq;
-using System.Collections.Generic; 
-using System; 
+using System.Windows;
+using System.Windows.Controls;
+using FashionStoreManagement.Models;
+using FashionStoreManagement.Pages;
+using FashionStoreManagement.Pages.DetailsWindow;
 
-namespace FashionStoreManagement
+namespace FashionStoreManagement.Pages
 {
-    public partial class ProductsWindow : Window, INotifyPropertyChanged
+    public partial class ProductsView : UserControl, INotifyPropertyChanged
     {
         private readonly FashionStoreDbContext _context = new FashionStoreDbContext();
 
-        
-        private List<Product> _allProducts = new List<Product>(); 
+        private List<Product> _allProducts = new List<Product>();
         public ObservableCollection<Product> Products { get; set; } = new ObservableCollection<Product>();
-        public ObservableCollection<string> Categories { get; set; } = new ObservableCollection<string>();
+
+
 
         // Pagination Properties 
         private int _currentPage = 1;
-        private int _itemsPerPage = 5; 
+        private int _itemsPerPage = 5;
         private int _totalPages;
-        private readonly User _loggedInUser;
-        public ProductsWindow(User user)
+
+        public ProductsView()
         {
             InitializeComponent();
-            _loggedInUser = user;
-            txtRoleDisplay.Text = _loggedInUser.Role;
             this.DataContext = this;
             LoadAllData();
             UpdateDataGrid();
@@ -44,45 +36,31 @@ namespace FashionStoreManagement
         //Load Data from Database
         private void LoadAllData()
         {
+
             _allProducts = _context.Products.Where(p => p.Status != "Archived").ToList();
-
-            var categories = _allProducts.Select(p => p.Category).Distinct().ToList();
-            Categories.Clear();
-            Categories.Add("All Categories");
-            categories.ForEach(c => Categories.Add(c));
             Products.Clear();
-        }
-
-        //Search bar 
-        private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            _currentPage = 1; // Reset về trang 1
-            UpdateDataGrid();
         }
 
         private void UpdateDataGrid()
         {
             IEnumerable<Product> filteredProducts = _allProducts;
-            // Apply Category filter
-            if (cmbCategoryFilter != null && cmbCategoryFilter.SelectedItem != null)
-            {
-                string? selectedCategory = cmbCategoryFilter?.SelectedItem?.ToString();
-                if (!string.IsNullOrEmpty(selectedCategory) && selectedCategory != "All Categories")
-                {
-                    filteredProducts = filteredProducts.Where(p => p.Category == selectedCategory);
-                }
-                if (selectedCategory != "All Categories")
-                {
-                    filteredProducts = filteredProducts.Where(p => p.Category == selectedCategory);
-                }
-            }
-            //Search 
+
+            // Apply Search filter (Thanh tìm kiếm chính)
             string searchTerm = txtSearch.Text.Trim().ToLower();
             if (!string.IsNullOrEmpty(searchTerm))
             {
                 filteredProducts = filteredProducts.Where(p =>
                     p.ProductName.ToLower().Contains(searchTerm) ||
                     (p.Description != null && p.Description.ToLower().Contains(searchTerm))
+                );
+            }
+
+            // Apply Category filter (Thanh tìm kiếm Category)
+            string categoryFilterTerm = txtCategoryFilter.Text.Trim().ToLower();
+            if (!string.IsNullOrEmpty(categoryFilterTerm))
+            {
+                filteredProducts = filteredProducts.Where(p =>
+                    p.Category != null && p.Category.ToLower().Contains(categoryFilterTerm)
                 );
             }
 
@@ -102,7 +80,14 @@ namespace FashionStoreManagement
         // Event Handlers
 
         // Filter by Category
-        private void CategoryFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void txtCategoryFilter_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            _currentPage = 1;
+            UpdateDataGrid();
+        }
+
+        // Search Bar
+        private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             _currentPage = 1;
             UpdateDataGrid();
@@ -143,6 +128,7 @@ namespace FashionStoreManagement
         {
             if (((Button)sender).DataContext is Product productToEdit)
             {
+                
                 ProductDetailsWindow editWindow = new ProductDetailsWindow(productToEdit);
                 if (editWindow.ShowDialog() == true)
                 {
@@ -155,7 +141,6 @@ namespace FashionStoreManagement
 
 
         //Delete (Deactivate) Product
-
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             if (((Button)sender).DataContext is Product productToDeactivate)
@@ -174,6 +159,7 @@ namespace FashionStoreManagement
                 }
             }
         }
+
         //  Add New Product
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
@@ -188,33 +174,7 @@ namespace FashionStoreManagement
             }
         }
 
-      
-
-        private bool IsMaximized = false;
-
-        private void Border_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ClickCount == 2)
-            {
-                if (IsMaximized)
-                {
-                    this.WindowState = WindowState.Normal;
-                    this.Width = 1080;
-                    this.Height = 720;
-                    IsMaximized = false;
-                }
-                else
-                {
-                    this.WindowState = WindowState.Maximized;
-                    IsMaximized = true;
-                }
-            }
-            else
-            {
-                this.DragMove();
-            }
-        }
-
+        // INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string name)
         {

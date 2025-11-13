@@ -10,16 +10,17 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FashionStoreManagement
+namespace FashionStoreManagement.Controls
 {
     /// <summary>
-    /// Interaction logic for ProductsView.xaml
+    /// Lógica de interacción para UserPopup.xaml
     /// </summary>
-    public partial class ProductsView : Window
+    public partial class UserPopup : UserControl
     {
-        public ProductsView()
+        public UserPopup()
         {
             InitializeComponent();
         }

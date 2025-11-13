@@ -1,0 +1,105 @@
+﻿<UserControl x:Class="FashionStoreManagement.Pages.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FashionStoreManagement.Pages"
+             xmlns:Icon="clr-namespace:MahApps.Metro.IconPacks;assembly=MahApps.Metro.IconPacks.Material"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="880">
+
+    <UserControl.Resources>
+        <Style x:Key="DashboardCard" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="0,0,15,0"/>
+            <Setter Property="MinWidth" Value="180"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="30 20 20 20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Dashboard" Grid.Row="0" FontSize="32" FontWeight="SemiBold" Foreground="Black" Margin="0,0,0,20" HorizontalAlignment="Left"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Border Style="{StaticResource DashboardCard}" Background="#E8F5E9">
+                <StackPanel>
+                    <TextBlock Text="TOTAL REVENUE" FontSize="12" Foreground="#6c7682" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding TotalRevenue, StringFormat='${0:N2}'}" FontSize="24" FontWeight="Bold" Foreground="#2E7D32" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource DashboardCard}" Background="#E3F2FD">
+                <StackPanel>
+                    <TextBlock Text="ORDERS TODAY" FontSize="12" Foreground="#6c7682" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding OrdersToday}" FontSize="24" FontWeight="Bold" Foreground="#1565C0" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource DashboardCard}" Background="#FFF3E0">
+                <StackPanel>
+                    <TextBlock Text="TOTAL CUSTOMERS" FontSize="12" Foreground="#6c7682" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding TotalCustomers}" FontSize="24" FontWeight="Bold" Foreground="#ef6c00" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource DashboardCard}" Background="#FFEBEE" >
+                <StackPanel>
+                    <TextBlock Text="LOW STOCK ITEMS" FontSize="12" Foreground="#6c7682" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding LowStockItemsCount}" FontSize="24" FontWeight="Bold" Foreground="#d9534f" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <Grid Grid.Row="2" Margin="0,20,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Recent Orders" FontSize="18" FontWeight="SemiBold" Foreground="Black"/>
+            <TextBlock Grid.Column="1" Text="Low Stock Items" FontSize="18" FontWeight="SemiBold" Foreground="Black"/>
+        </Grid>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <DataGrid Grid.Column="0" Margin="0,0,10,0"
+                      ItemsSource="{Binding RecentOrders}"                    
+                      ColumnHeaderStyle="{StaticResource CleanHeaderStyle}"
+                      RowStyle="{StaticResource CleanRowStyle}"
+                      CellStyle="{StaticResource CleanCellStyle}"
+                      AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Order ID" Binding="{Binding OrderId}"/>
+                    <DataGridTextColumn Header="Customer" Binding="{Binding Customer.FullName}" Width="*"/>
+                    <DataGridTextColumn Header="Date" Binding="{Binding OrderDate, StringFormat='dd/MM/yyyy'}"/>
+                    <DataGridTextColumn Header="Total" Binding="{Binding TotalAmount, StringFormat='${0:N2}'}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <DataGrid Grid.Column="1" Margin="10,0,0,0"
+                      ItemsSource="{Binding LowStockProducts}"                     
+                      ColumnHeaderStyle="{StaticResource CleanHeaderStyle}"
+                      RowStyle="{StaticResource CleanRowStyle}"
+                      CellStyle="{StaticResource CleanCellStyle}"
+                      AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Product" Binding="{Binding ProductName}" Width="*"/>
+                    <DataGridTextColumn Header="Category" Binding="{Binding Category}"/>
+                    <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+    </Grid>
+</UserControl>

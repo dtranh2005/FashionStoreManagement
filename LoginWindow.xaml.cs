@@ -1,38 +1,87 @@
-﻿using System.Windows;
-using FashionStoreManagement.Models; 
-using System.Linq; 
+﻿using FashionStoreManagement.Models;
+using FashionStoreManagement.Pages;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
 
 namespace FashionStoreManagement
 {
     public partial class LoginWindow : Window
     {
-        private readonly FashionStoreDbContext _context = new FashionStoreDbContext();
-
         public LoginWindow()
         {
             InitializeComponent();
         }
 
-        private void btnLogin_Click(object sender, RoutedEventArgs e)
+        private void btnClose_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private async void btnLogin_Click(object sender, RoutedEventArgs e)
         {
             string username = txtUsername.Text;
             string password = txtPassword.Password;
 
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            txtErrorMessage.Text = "";
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                MessageBox.Show("Please enter both username and password.", "Login Failed", MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtErrorMessage.Text = "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.";
                 return;
             }
-            var user = _context.Users.FirstOrDefault(u => u.Username == username && u.Password == password);
-            if (user != null && (user.Role == "Admin" || user.Role == "Staff"))
+
+            try
             {
-                ProductsWindow mainWindow = new ProductsWindow(user);
-                mainWindow.Show();
-                this.Close();
+
+                using (var db = new FashionStoreDbContext())
+                {
+                    var user = await db.Users
+                                     .FirstOrDefaultAsync(u => u.Username == username);
+
+                    if (user != null)
+                    {
+                        if (user.Password == password)
+                        {
+                            MainWindow mainWindow = new MainWindow(user);
+                            mainWindow.Show(); 
+                            this.Close();
+                        }
+                        else
+                        {
+                            txtErrorMessage.Text = "Incorrect username or pasword";
+                        }
+                    }
+                    else
+                    {
+                        txtErrorMessage.Text = "Incorrect username or pasword";
+                    }
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Invalid username, password, or you do not have permission (Admin/Staff).", "Login Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                txtErrorMessage.Text = "Cannot connect to database";
+            }
+        }
+
+        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.DragMove();
             }
         }
     }

@@ -5,23 +5,44 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FashionStoreManagement"
         mc:Ignorable="d"
-        Title="Login - Fashion Store" Height="350" Width="300"
-        WindowStartupLocation="CenterScreen"
-        WindowStyle="SingleBorderWindow"
-        ResizeMode="NoResize">
+        Title="Login" Height="480" Width="380" 
+        WindowStartupLocation="CenterScreen" WindowStyle="None"
+        Background="Transparent" AllowsTransparency="True"
+        ResizeMode="NoResize" FontFamily="Poppins">
 
-    <Grid Margin="20">
-        <StackPanel VerticalAlignment="Center">
-            <TextBlock Text="FASHION STORE" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#623ed0" Margin="0,0,0,30"/>
+    <Border Background="{DynamicResource PrimaryBackgroundColor}" CornerRadius="8" MouseDown="Border_MouseDown">
+        <Grid>
+            <Button x:Name="btnClose" Style="{StaticResource IconButtonsStyle}" Content="{DynamicResource close}" Click="btnClose_Click" Tag="IsCloseButton"
+                    HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,10,0"/>
 
-            <TextBlock Text="Username:" Margin="0,5"/>
-            <TextBox x:Name="txtUsername" Padding="5"/>
+            <StackPanel VerticalAlignment="Center" Margin="40">
+                <Border Width="60" Height="60" Padding="3" Background="White" CornerRadius="100" Margin="0,0,0,10">
+                    <Ellipse>
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="/Resources/logo.png"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                </Border>
 
-            <TextBlock Text="Password:" Margin="0,10,0,5"/>
-            <PasswordBox x:Name="txtPassword" Padding="5"/>
+                <TextBlock Text="Fashion Store" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Foreground="{DynamicResource PrimaryTextColor}" Margin="0,0,0,20"/>
 
-            <Button x:Name="btnLogin" Content="Login" Click="btnLogin_Click" Margin="0,20,0,0" Padding="10" Background="#623ed0" Foreground="White" FontWeight="Bold"/>
+                <TextBlock Text="Username" Style="{DynamicResource TextBlockStyle}"/>
+                <TextBox x:Name="txtUsername" Style="{DynamicResource TextBoxStyle}"/>
 
-        </StackPanel>
-    </Grid>
+                <TextBlock Text="Password" Margin="0,15,0,0" Style="{DynamicResource TextBlockStyle}"/>
+                <PasswordBox x:Name="txtPassword" Style="{DynamicResource PasswordBoxStyle}"/>
+
+
+                <TextBlock x:Name="txtErrorMessage" 
+                           Foreground="Red" 
+                           Margin="0,10,0,0" 
+                           TextWrapping="Wrap"
+                           HorizontalAlignment="Center" />
+
+                <Button x:Name="btnLogin" Content="Login" Foreground="#ffffff" Click="btnLogin_Click" 
+                        Style="{StaticResource addButton}" Margin="0,10,0,0" Width="299" />
+
+            </StackPanel>
+        </Grid>
+    </Border>
 </Window>

@@ -1,0 +1,131 @@
+﻿<UserControl x:Class="FashionStoreManagement.Pages.ProductsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FashionStoreManagement.Pages"
+             xmlns:Icon="clr-namespace:MahApps.Metro.IconPacks;assembly=MahApps.Metro.IconPacks.Material"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="880">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
+
+    <Grid Margin="30 20 20 20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        
+
+        <TextBlock Text="Products" Grid.Row="1" FontSize="32" FontWeight="SemiBold" Foreground="Black" Margin="0 20 0 0" HorizontalAlignment="Left"/>
+
+        <Button Grid.Row="1" Style="{StaticResource addButton}" Click="AddButton_Click">
+            <StackPanel Orientation="Horizontal">
+                <Icon:PackIconMaterial Kind="Plus" VerticalAlignment="Center" Width="11" Height="11" Margin="0 1 8 0"/>
+                <TextBlock Text="Add New Product"/>
+            </StackPanel>
+        </Button>
+        <Separator Height="2" Grid.Row="3" Background="#dae2ea" Margin="0 -1 0 10"/>
+        <Grid Grid.Row="4" Width="300" HorizontalAlignment="Left" Margin="0,5,0,5">
+            <TextBlock Margin="20 0" VerticalAlignment="Center" Foreground="#b0b9c6" IsHitTestVisible="False"
+                 Panel.ZIndex="1" Text="Search by products name" 
+                    Visibility="{Binding ElementName=txtSearch, Path=Text.IsEmpty, Converter={StaticResource BoolToVis}}"/>
+            <TextBox Name="txtSearch" Style="{StaticResource textboxSearch}" TextChanged="txtSearch_TextChanged"/>
+            
+
+            <Icon:PackIconMaterial Kind="Magnify" Width="15" Height="15" VerticalAlignment="Center" HorizontalAlignment="Right" 
+       Margin="0 0 15 0" Foreground="#b0b9c6"/>
+        </Grid>
+        
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,5">
+            <TextBlock Text="Filter by Category:" FontSize="13" FontWeight="SemiBold" Foreground="Black" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <Grid Width="200">
+                <TextBox x:Name="txtCategoryFilter" 
+                         Style="{StaticResource textboxSearch}" 
+                         TextChanged="txtCategoryFilter_TextChanged"/>
+
+                <TextBlock Text="Type category..." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="15,0,0,0"
+                           Foreground="#b0b9c6" IsHitTestVisible="False" Panel.ZIndex="1"
+                           Visibility="{Binding ElementName=txtCategoryFilter, Path=Text.IsEmpty, Converter={StaticResource BoolToVis}}"/>
+            </Grid>
+        </StackPanel>
+
+        <DataGrid Grid.Row="5" x:Name="ProductsDatagrid"
+          ItemsSource="{Binding Products}" 
+          AutoGenerateColumns="False"
+          CanUserAddRows="False"
+          HeadersVisibility="Column"
+          GridLinesVisibility="None"
+          BorderThickness="0"
+          Background="Transparent"
+          ColumnHeaderStyle="{StaticResource CleanHeaderStyle}"
+          RowStyle="{StaticResource CleanRowStyle}"
+          CellStyle="{StaticResource CleanCellStyle}">
+
+            <DataGrid.Columns>
+
+                <DataGridTextColumn Header="Product ID" Width="auto" Binding="{Binding ProductId}"/>
+                <DataGridTemplateColumn Header="Product Name" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Border Background="#623ed0" CornerRadius="100" Width="30" Height="30" Margin="0,0,10,0">
+                                    <Icon:PackIconMaterial Kind="TshirtCrew" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                                </Border>
+                                <TextBlock Text="{Binding ProductName}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Category" Width="auto" Binding="{Binding Category}"/>
+                <DataGridTextColumn Header="Price" Width="auto" Binding="{Binding Price, StringFormat='${0:N2}'}"/>
+                <DataGridTextColumn Header="Quantity" Width="auto" Binding="{Binding Quantity}"/>
+                <DataGridTextColumn Header="Description" Width="*" Binding="{Binding Description}"/>
+
+                <DataGridTemplateColumn Header="Operations" Width="auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Style="{StaticResource EditButton}" Click="EditButton_Click">
+                                    <Icon:PackIconMaterial Kind="Pencil" Width="15" Height="15"/>
+                                </Button>
+                                <Button Style="{StaticResource DeleteButton}" Click="DeleteButton_Click">
+                                    <Icon:PackIconMaterial Kind="Delete" Width="15" Height="15"/>
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Border Grid.Row="6" HorizontalAlignment="Right" BorderBrush="#dee4ec" BorderThickness="1" 
+        CornerRadius="5" Padding="5" Background="White" Margin=" 0 10 10 10">
+            <StackPanel Orientation="Horizontal" x:Name="PaginationPanel">
+                <Button Style="{StaticResource pagingButton}" Click="PrevButton_Click">
+                    <Icon:PackIconMaterial Kind="ChevronLeft" Style="{StaticResource pagingButtonIcon}"/>
+                </Button>
+
+                <Rectangle Width="1" Fill="#dee4ec" Margin="3 7"/>
+
+                <Button Style="{StaticResource pagingButton}" Content="1" Click="PagingButton_Click"/>
+                <Button Style="{StaticResource pagingButton}" Content="2" Click="PagingButton_Click"/>
+                <Button Style="{StaticResource pagingButton}" Content="3" Click="PagingButton_Click"/>
+                <Button Style="{StaticResource pagingButton}" Content="4" Click="PagingButton_Click"/>
+
+                <Button Style="{StaticResource pagingButton}" Click="NextButton_Click">
+                    <Icon:PackIconMaterial Kind="ChevronRight" Style="{StaticResource pagingButtonIcon}"/>
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
